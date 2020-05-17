@@ -12,6 +12,7 @@ import events.NotificationEvent;
 import graph.NewGraph;
 import network.Topology;
 import rountingAlgorithm.DijkstrasAlgorithm;
+import simulator.DiscreteEventSimulator;
 import states.State;
 import states.enb.N0;
 import states.unidirectionalway.W0;
@@ -38,6 +39,8 @@ public class X11 extends State {
 			e.startTime = exb.phyLayer.sim.time();
 			e.endTime = e.startTime + Constant.SWITCH_CYCLE;
 			exb.insertEvents(e);
+			DiscreteEventSimulator sim = (DiscreteEventSimulator) exb.phyLayer.sim;
+			sim.allEvents.add(e);
 		}
 	}
 	

@@ -54,7 +54,7 @@ public class GenerationEvent extends Event {
 			
 			
 			// co the la Sq1 hoac Sq2
-			if (sq.allPackets.size()<=1)
+			if (sq.allPackets.size()<=10)
 			 {
 				sq.state.act(this);
 				

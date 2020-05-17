@@ -71,7 +71,6 @@ public class N0 extends State {
 		enb.allPackets[Constant.QUEUE_SIZE - 1] = null;
 		ExitBuffer exb = enb.way.exb;
 //		exb.state.act();
-		System.out.println(".");
 	}
 	
 //	public void getNextState(Element e) {

@@ -21,6 +21,7 @@ import graph.Graph;
 import graph.NewGraph;
 import network.Topology;
 import rountingAlgorithm.DijkstrasAlgorithm;
+import simulator.DiscreteEventSimulator;
 import states.State;
 import states.enb.N0;
 import states.enb.N1;
@@ -63,6 +64,8 @@ public class X00 extends State {
 //			e.endTime = e.startTime;
 			e.endTime = e.startTime + Constant.SWITCH_CYCLE;
 			exb.insertEvents(e);
+			DiscreteEventSimulator sim = (DiscreteEventSimulator) exb.phyLayer.sim;
+			sim.allEvents.add(e);
 		}
 	}
 	

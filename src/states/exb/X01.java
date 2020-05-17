@@ -15,6 +15,7 @@ import graph.NewGraph;
 import network.Switch;
 import network.Topology;
 import rountingAlgorithm.DijkstrasAlgorithm;
+import simulator.DiscreteEventSimulator;
 
 public class X01 extends State {
 	// • State X01: EXB is not full and able to transfer packet.
@@ -63,6 +64,8 @@ public class X01 extends State {
 			e.startTime = exb.phyLayer.sim.time();
 			e.endTime = e.startTime + Constant.SWITCH_CYCLE;
 			exb.insertEvents(e);
+			DiscreteEventSimulator sim = (DiscreteEventSimulator) exb.phyLayer.sim;
+			sim.allEvents.add(e);
 		}
 	}
 	
