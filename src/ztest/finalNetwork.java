@@ -88,7 +88,6 @@ public class finalNetwork {
         sources.add(HostIDs.get(6));
         sources.add(HostIDs.get(7));
         
-        
         destination.add(HostIDs.get(8));
         destination.add(HostIDs.get(9));
         destination.add(HostIDs.get(10));
@@ -102,7 +101,6 @@ public class finalNetwork {
         for (int i=0;i<8;i++) {
         	traffic.put(sources.get(i), destination.get(i));
         }
-        
 		
 		ThroughputExperiment experiment = new ThroughputExperiment(network);
 		

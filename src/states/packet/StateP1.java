@@ -17,6 +17,7 @@ import events.LeavingSourceQueueEvent;
 import network.Node;
 import network.Packet;
 import network.host.SourceQueue;
+import simulator.DiscreteEventSimulator;
 import simulator.Simulator;
 
 public class StateP1 extends State {
@@ -92,19 +93,20 @@ public class StateP1 extends State {
 		if (!p.acting) {
 			Simulator.PacketsAct.replace(this.p, false);
 			Map<Packet, Boolean> m = Simulator.PacketsAct;
-			System.out.println(Simulator.PacketsAct.get(this.p));
+//			System.out.println(Simulator.PacketsAct.get(this.p));
 			System.out.println("P1");
 			SourceQueue sq = (SourceQueue) elem;
 			ExitBuffer EXB = sq.phyLayer.EXBs[0];
 			if (sq.state instanceof Sq2 && (EXB.state instanceof X01 || EXB.state instanceof X00)) {
-				System.out.println(sq.allEvents.size());
 				Event e = new LeavingSourceQueueEvent(sq, this.p);
 				// Event B
 				e.startTime = sq.phyLayer.sim.time();
 				e.endTime = e.startTime;
 				sq.insertEvents(e);
-				System.out.println(sq.allEvents.size());
-				System.out.println(sq.allEvents.size());
+				DiscreteEventSimulator sim = (DiscreteEventSimulator) sq.phyLayer.sim;
+				sim.allEvents.add(e);
+//				System.out.println(sq.allEvents.size());
+//				System.out.println(sq.allEvents.size());
 			}
 		}
 	}

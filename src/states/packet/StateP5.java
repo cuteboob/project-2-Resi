@@ -12,10 +12,13 @@ import network.Node;
 import network.Packet;
 import network.Switch;
 import network.host.Host;
+import simulator.DiscreteEventSimulator;
 import simulator.Simulator;
 import states.State;
+import states.enb.N0;
 import states.exb.X00;
 import states.exb.X01;
+import states.exb.X10;
 import states.exb.X11;
 import states.unidirectionalway.W0;
 
@@ -38,9 +41,17 @@ public class StateP5 extends State {
 	public void act() {
 		if (!p.acting) {
 		Simulator.PacketsAct.replace(p, false);
-		System.out.println("P5");
+		System.out.println("P5, id goi tin: " + p.id);
 		ExitBuffer EXB = (ExitBuffer) this.elem;
 		Way w = EXB.way;
+		if (EXB.state instanceof X00&& w.state instanceof W0 
+				&& w.enb.state instanceof N0) {
+			EXB.state = new X01(EXB);
+		}
+		if (EXB.state instanceof X10&& w.state instanceof W0 
+				&& w.enb.state instanceof N0) {
+			EXB.state = new X11(EXB);
+		}
 		if (check(EXB)&&(EXB.state instanceof X01||
 				EXB.state instanceof X11)&&(w.state instanceof W0)) {
 			Event e = new LeavingSwitchEvent(EXB, this.p);		// event F
@@ -48,35 +59,40 @@ public class StateP5 extends State {
 			e.endTime = e.startTime + Constant.SWITCH_CYCLE;	
 //			e.endTime = e.startTime;
 			EXB.insertEvents(e);
+			DiscreteEventSimulator sim = (DiscreteEventSimulator) EXB.phyLayer.sim;
+			sim.allEvents.add(e);
 		}
 		}
 	}
 	
 	public boolean check(ExitBuffer EXB) {
-		Node n = (Node) EXB.phyLayer.node;
-		if (n instanceof Host) {
-			for (int i=0;i<Constant.QUEUE_SIZE;i++) {
-				if (EXB.allPackets[i] == this.p) {
-					return true;
-				}
-			}
-		}
-		if (n instanceof Switch) {
-			for (int i=0;i<Constant.QUEUE_SIZE;i++) {
-				if (EXB.allPackets[i] == this.p) {
-					return true;
-				}
-			}
-		}
-		return false;
+//		Node n = (Node) EXB.phyLayer.node;
+//		if (n instanceof Host) {
+//			for (int i=0;i<Constant.QUEUE_SIZE;i++) {
+//				if (EXB.allPackets[i] == this.p) {
+//					return true;
+//				}
+//			}
+//		}
+//		if (n instanceof Switch) {
+//			for (int i=0;i<Constant.QUEUE_SIZE;i++) {
+//				if (EXB.allPackets[i] == this.p) {
+//					return true;
+//				}
+//			}
+//		}
+//		return false;
+		return EXB.allPackets[0] == this.p;
 	}
 	
 	public void act(LeavingSwitchEvent ev) {	// F
 		// chuyen tu ENB sang EXB
 		ExitBuffer EXB = (ExitBuffer) elem;
 		Way w = EXB.way;
-
+//		if (check(EXB)&&(EXB.state instanceof X01||
+//				EXB.state instanceof X11)&&(w.state instanceof W0)) {
 		this.p.state = new StateP3(this.p, w);
 		this.p.state.act();
+//		}
 	}
 }

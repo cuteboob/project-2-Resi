@@ -13,6 +13,7 @@ import network.Packet;
 import network.Switch;
 import network.host.Host;
 import network.host.SourceQueue;
+import simulator.DiscreteEventSimulator;
 import simulator.Simulator;
 import states.State;
 import states.exb.X00;
@@ -42,7 +43,9 @@ public class StateP4 extends State{
 		Simulator.PacketsAct.replace(p, false);
 		System.out.println("P4");
 		EntranceBuffer ENB = (EntranceBuffer) this.elem;
-		ExitBuffer EXB = ENB.phyLayer.EXBs[0];
+		Switch sw = (Switch)ENB.phyLayer.node;
+		int EXBIndex = sw.networkLayer.route(p);
+		ExitBuffer EXB = ENB.phyLayer.EXBs[EXBIndex];
 		Packet p = this.p;
 		if ((check(ENB)) &&(EXB.state instanceof X01||EXB.state instanceof X00)) {
 			Event e = new MovingInSwitchEvent(ENB, this.p);
@@ -50,27 +53,30 @@ public class StateP4 extends State{
 //			e.endTime = e.startTime + Constant.SWITCH_CYCLE;
 			e.endTime = e.startTime + Constant.SWITCH_CYCLE;
 			ENB.insertEvents(e);
+			DiscreteEventSimulator sim = (DiscreteEventSimulator) ENB.phyLayer.sim;
+			sim.allEvents.add(e);
 		}
 		}
 	}
 	
 	public boolean check(EntranceBuffer ENB) {
-		Node n = (Node) ENB.phyLayer.node;
-		if (n instanceof Host) {
-			for (int i=0;i<Constant.QUEUE_SIZE;i++) {
-				if (ENB.allPackets[i] == this.p) {
-					return true;
-				}
-			}
-		}
-		if (n instanceof Switch) {
-			for (int i=0;i<Constant.QUEUE_SIZE;i++) {
-				if (ENB.allPackets[i] == this.p) {
-					return true;
-				}
-			}
-		}
-		return false;
+//		Node n = (Node) ENB.phyLayer.node;
+//		if (n instanceof Host) {
+//			for (int i=0;i<Constant.QUEUE_SIZE;i++) {
+//				if (ENB.allPackets[i] == this.p) {
+//					return true;
+//				}
+//			}
+//		}
+//		if (n instanceof Switch) {
+//			for (int i=0;i<Constant.QUEUE_SIZE;i++) {
+//				if (ENB.allPackets[i] == this.p) {
+//					return true;
+//				}
+//			}
+//		}
+//		return false;
+		return ENB.allPackets[0] == this.p;
 	}
 	
 	public void act(MovingInSwitchEvent ev) {	// E

@@ -85,8 +85,8 @@ public class X00 extends State {
 			int u = nw.waysUandV.get(exb.way).get(0);
 			int v = nw.waysUandV.get(exb.way).get(1);
 			NewGraph g = (NewGraph) nw.getGraph();
-			g.deleteWay(u, v);
-			DijkstrasAlgorithm.Init();
+//			g.deleteWay(u, v);
+//			DijkstrasAlgorithm.Init();
 			exb.state = new X10(exb);
 			for (int i = 0; i < Constant.QUEUE_SIZE; i++)
 				if (exb.allPackets[i] == null) {
@@ -118,8 +118,8 @@ public class X00 extends State {
 			int u = nw.waysUandV.get(exb.way).get(0);
 			int v = nw.waysUandV.get(exb.way).get(1);
 			NewGraph g = (NewGraph) nw.getGraph();
-			g.deleteWay(u, v);
-			DijkstrasAlgorithm.Init();
+//			g.deleteWay(u, v);
+//			DijkstrasAlgorithm.Init();
 			exb.state = new X10(exb);
 			for (int i = 0; i < Constant.QUEUE_SIZE; i++)
 				if (exb.allPackets[i] == null) {

@@ -8,6 +8,7 @@ import elements.ExitBuffer;
 import network.Node;
 import network.Packet;
 import network.host.SourceQueue;
+import simulator.DiscreteEventSimulator;
 import states.exb.X00;
 import states.exb.X01;
 import states.exb.X10;
@@ -45,12 +46,28 @@ public class LeavingSourceQueueEvent extends Event {
 		ExitBuffer EXB = sq.phyLayer.EXBs[0];
 		// co 3 EXB (cach xu li?????)
 		// co le lien quan den dinh tuyen
-		if (EXB.state instanceof X00||EXB.state instanceof X01) {
+//		if (EXB.state instanceof X00||EXB.state instanceof X01) {
+//			ts.add(TypeB.B3);
+//		}
+//		if (EXB.state instanceof X10||EXB.state instanceof X11) {
+//			ts.add(TypeB.B4);
+//		}
+		
+		int dem = 0;
+		for (int i=0;i< Constant.QUEUE_SIZE;i++) {
+			if (EXB.allPackets[i]!=null) dem++;
+		}
+			
+		//D1: not full
+		//D2: full
+		
+		if (dem+1 != Constant.QUEUE_SIZE) {
 			ts.add(TypeB.B3);
 		}
-		if (EXB.state instanceof X10||EXB.state instanceof X11) {
+		else {
 			ts.add(TypeB.B4);
 		}
+		
 		this.types = ts;
 	}
 	
@@ -71,7 +88,8 @@ public class LeavingSourceQueueEvent extends Event {
 		
 		SourceQueue sq = (SourceQueue) elem;
 		ExitBuffer EXB = sq.phyLayer.EXBs[0];
-		
+		DiscreteEventSimulator sim = (DiscreteEventSimulator) sq.phyLayer.sim;
+		sim.deleteEventFromAllEvent(this);
 		Packet p = this.p;
 		
 		// if(elem instanceof SourceQueue)

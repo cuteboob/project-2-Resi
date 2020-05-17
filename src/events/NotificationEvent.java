@@ -4,6 +4,7 @@ import elements.Element;
 import elements.ExitBuffer;
 import elements.Way;
 import network.Packet;
+import simulator.DiscreteEventSimulator;
 
 public class NotificationEvent extends Event {
 	//Event dai dien cho su kien loai (H): mot Switch bao cho hang xom cua no rang ENB cua no da trong
@@ -19,12 +20,14 @@ public class NotificationEvent extends Event {
 		ExitBuffer EXB = (ExitBuffer) elem;
 
 		if (EXB.phyLayer.sim.time() == this.endTime) {
-			elem.removeExecutedEvent(this);
 			Way w = EXB.way;
+			elem.removeExecutedEvent(this);
+			DiscreteEventSimulator sim = (DiscreteEventSimulator) EXB.phyLayer.sim;
+			sim.deleteEventFromAllEvent(this);
 			EXB.state.act(this);
 			w.state.act(this);
 			System.out.println("End Event H");
-			
+					
 		} else if (EXB.phyLayer.sim.time() == this.startTime) {
 			System.out.println("Event H");
 			this.startTime  = this.endTime;

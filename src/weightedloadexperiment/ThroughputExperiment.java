@@ -52,7 +52,7 @@ public class ThroughputExperiment {
             }
         }
         
-//        for (int a = 0; a<= 1* Constant.HOST_DELAY; a+= Constant.HOST_DELAY) {
+//        for (int a = 0; a<= 1000 * Constant.HOST_DELAY; a+= Constant.HOST_DELAY) {
 //        	for (Integer source : trafficPattern.keySet()) {
 //                Integer destination = trafficPattern.get(source);
 //                count++;

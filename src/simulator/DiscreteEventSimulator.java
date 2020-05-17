@@ -30,6 +30,10 @@ import network.Topology;
 import network.host.DestinationNode;
 import network.host.Host;
 import network.host.SourceQueue;
+import states.enb.N0;
+import states.enb.N1;
+import states.exb.X01;
+import states.unidirectionalway.W0;
 
 public class DiscreteEventSimulator extends Simulator {
 	public int numReceived = 0; // x
@@ -75,13 +79,45 @@ public class DiscreteEventSimulator extends Simulator {
 
 			currentEvents = selectCurrentEvents(currentTime);
 
-
+			if (currentTime == 1000000) {
+				int dem = 0;
+//				for (Way w: this.network.getWays()) {
+//					dem++;
+//					if (!(w.state instanceof W0)) {
+//						System.out.println("dem");
+//					}
+//				}
+//				for (Host h: this.network.getHosts()) {
+//					dem++;
+//					for (int i= 0; i<Constant.HOST_LINK;i++) {
+//						if (!(h.physicalLayer.EXBs[i].state instanceof X01)) {
+//							System.out.println("dem");
+//						}
+//					}
+//				}
+				for (Switch sw: this.network.getSwitches()) {
+					dem++;
+					for (int i= 0; i<Constant.SWITCH_LINK;i++) {
+						if (!(sw.physicalLayer.EXBs[i].state instanceof X01)) {
+							System.out.println(sw.id);
+						}
+					}
+				}
+				
+//				for (Switch sw: this.network.getSwitches()) {
+//					dem++;
+//					for (int i= 0; i<Constant.SWITCH_LINK;i++) {
+//						if (!(sw.physicalLayer.ENBs[i].state instanceof N0)) {
+//							System.out.println(dem);
+//						}
+//					}
+//				}
+				System.out.println(".");
+			}
 //			System.out.println("Tong so Events la: " + allEvents.size());
 //			
 //			System.out.println("Tong so Events la: " + currentEvents.size());
-
 			System.out.println(currentEvents.size());
-			System.out.print("");
 			for (Event e : currentEvents) { // ok
 				e.execute();
 				// execute se thuc hien updateState luon
@@ -96,16 +132,18 @@ public class DiscreteEventSimulator extends Simulator {
 //    		addCurrentEventsFromDevices(currentTime);
 //    		//
 			
+			
+
 			ElemUpdateEvent(currentTime);
 			
-			allEvents = selectAllEvents();
+//			deleteAllEventsFromList(currentEvents);
 			
+//			allEvents = selectAllEvents();
+
 			currentTime = minEndTimeOffAllEvents(); // ok
 
 			// Ham EventGenerator se su dung traffic de tao them goi
 			// cong them tat ca Events trong network
-
-
 
 			// thieu ham nay
 
@@ -125,15 +163,15 @@ public class DiscreteEventSimulator extends Simulator {
 
 		for (Host host : allHosts) {
 			addEventsFromList(alEvents, host.physicalLayer.sq.allEvents);
-			for (int i = 0; i< Constant.HOST_LINK; i++)
-			addEventsFromList(alEvents, host.physicalLayer.EXBs[i].allEvents);// add events of EXB of hosts
+			for (int i = 0; i < Constant.HOST_LINK; i++)
+				addEventsFromList(alEvents, host.physicalLayer.EXBs[i].allEvents);// add events of EXB of hosts
 		}
 
 		for (Switch sw : allSwitchs) {
-			for (int i = 0; i< Constant.SWITCH_LINK; i++) {
-			addEventsFromList(alEvents, sw.physicalLayer.ENBs[i].allEvents);// add events of EXB of hosts
-			addEventsFromList(alEvents, sw.physicalLayer.EXBs[i].allEvents);// add events of EXB of hosts
-		}
+			for (int i = 0; i < Constant.SWITCH_LINK; i++) {
+				addEventsFromList(alEvents, sw.physicalLayer.ENBs[i].allEvents);// add events of EXB of hosts
+				addEventsFromList(alEvents, sw.physicalLayer.EXBs[i].allEvents);// add events of EXB of hosts
+			}
 		}
 		for (Way w : allWays) {
 			addEventsFromList(alEvents, w.allEvents);
@@ -160,33 +198,33 @@ public class DiscreteEventSimulator extends Simulator {
 			for (Packet p : allPackets) {
 				m.put(p, true);
 			}
-			for (int j=0; j< Constant.HOST_LINK; j++) {
-			ExitBuffer exb = h.physicalLayer.EXBs[j];
-			for (int i = 0; i < Constant.QUEUE_SIZE - 1; i++) {
-				if (exb.allPackets[i] != null) {
-					m.put(exb.allPackets[i], true);
+			for (int j = 0; j < Constant.HOST_LINK; j++) {
+				ExitBuffer exb = h.physicalLayer.EXBs[j];
+				for (int i = 0; i < Constant.QUEUE_SIZE; i++) {
+					if (exb.allPackets[i] != null) {
+						m.put(exb.allPackets[i], true);
+					}
 				}
-			}
 			}
 		}
 
 		for (Switch sw : allSwitchs) {
 			ArrayList<Packet> allPackets;
-			for (int j=0; j< Constant.SWITCH_LINK; j++) {
-			EntranceBuffer enb = sw.physicalLayer.ENBs[j];
-			for (int i = 0; i < Constant.QUEUE_SIZE - 1; i++) {
-				if (enb.allPackets[i] != null) {
-					m.put(enb.allPackets[i], true);
+			for (int j = 0; j < Constant.SWITCH_LINK; j++) {
+				EntranceBuffer enb = sw.physicalLayer.ENBs[j];
+				for (int i = 0; i < Constant.QUEUE_SIZE; i++) {
+					if (enb.allPackets[i] != null) {
+						m.put(enb.allPackets[i], true);
+					}
 				}
 			}
-			}
-			for (int j=0; j< Constant.SWITCH_LINK; j++) {
-			ExitBuffer exb = sw.physicalLayer.EXBs[j];
-			for (int i = 0; i < Constant.QUEUE_SIZE - 1; i++) {
-				if (exb.allPackets[i] != null) {
-					m.put(exb.allPackets[i], true);
+			for (int j = 0; j < Constant.SWITCH_LINK; j++) {
+				ExitBuffer exb = sw.physicalLayer.EXBs[j];
+				for (int i = 0; i < Constant.QUEUE_SIZE; i++) {
+					if (exb.allPackets[i] != null) {
+						m.put(exb.allPackets[i], true);
+					}
 				}
-			}
 			}
 		}
 
@@ -207,13 +245,13 @@ public class DiscreteEventSimulator extends Simulator {
 
 			SourceQueue sq1 = host.physicalLayer.sq;
 			SourceQueue sq2 = (SourceQueue) host.physicalLayer.sq.state.elem;
-			for (int i=0;i<Constant.HOST_LINK;i++) {
+			for (int i = 0; i < Constant.HOST_LINK; i++) {
 				host.physicalLayer.EXBs[i].state.elem = host.physicalLayer.EXBs[i];
 			}
 		}
 
 		for (Switch sw : allSwitchs) {
-			for (int i=0;i<Constant.SWITCH_LINK;i++) {
+			for (int i = 0; i < Constant.SWITCH_LINK; i++) {
 				sw.physicalLayer.ENBs[i].state.elem = sw.physicalLayer.ENBs[i];
 				sw.physicalLayer.EXBs[i].state.elem = sw.physicalLayer.EXBs[i];
 			}
@@ -236,52 +274,65 @@ public class DiscreteEventSimulator extends Simulator {
 			ArrayList<Packet> allPackets;
 			allPackets = h.physicalLayer.sq.allPackets;
 			for (Packet p : allPackets) {
-				Map<Packet, Boolean> m = Simulator.PacketsAct;
 //				if (!(Simulator.PacketsAct.containsKey(p)))
 //					p.state.act();
-
 				if (Simulator.PacketsAct.containsKey(p) && Simulator.PacketsAct.get(p))
+				{
 					p.state.act();
-			}
-			for (int j=0;j<Constant.HOST_LINK;j++) {
-			ExitBuffer exb = h.physicalLayer.EXBs[j];
-			for (int i = 0; i < Constant.QUEUE_SIZE - 1; i++) {
-				if (exb.allPackets[i] != null) {
-//					if (!(Simulator.PacketsAct.containsKey(exb.allPackets[i])))
-//							exb.allPackets[i].state.act();
-					if (Simulator.PacketsAct.containsKey(exb.allPackets[i])
-							&& Simulator.PacketsAct.get(exb.allPackets[i]))
-						exb.allPackets[i].state.act();
+//					System.out.println(".");
 				}
 			}
+			for (int j = 0; j < Constant.HOST_LINK; j++) {
+				ExitBuffer exb = h.physicalLayer.EXBs[j];
+				for (int i = 0; i < Constant.QUEUE_SIZE; i++) {
+					if (exb.allPackets[i] != null) {
+//					if (!(Simulator.PacketsAct.containsKey(exb.allPackets[i])))
+//							exb.allPackets[i].state.act();
+						Map<Packet, Boolean> s = Simulator.PacketsAct;
+						if (Simulator.PacketsAct.containsKey(exb.allPackets[i])
+								&& Simulator.PacketsAct.get(exb.allPackets[i]))
+						{
+							exb.allPackets[i].state.act();
+//							System.out.println(".");
+						}
+					}
+				}
 			}
 		}
 
 		for (Switch sw : allSwitchs) {
-			ArrayList<Packet> allPackets;
-			for (int j=0;j<Constant.SWITCH_LINK;j++) {
-			EntranceBuffer enb = sw.physicalLayer.ENBs[j];
-			for (int i = 0; i < Constant.QUEUE_SIZE - 1; i++) {
-				if (enb.allPackets[i] != null) {
+			for (int j = 0; j < Constant.SWITCH_LINK; j++) {
+				EntranceBuffer enb = sw.physicalLayer.ENBs[j];
+				for (int i = 0; i < Constant.QUEUE_SIZE; i++) {
+					if (enb.allPackets[i] != null) {
 //					if (!(Simulator.PacketsAct.containsKey(enb.allPackets[i])))
 //						enb.allPackets[i].state.act();
-					if (Simulator.PacketsAct.containsKey(enb.allPackets[i])
-							&& Simulator.PacketsAct.get(enb.allPackets[i]))
-						enb.allPackets[i].state.act();
+						System.out.println("ID goi tin: " + enb.allPackets[i].id);
+						if (Simulator.PacketsAct.containsKey(enb.allPackets[i])
+								&& Simulator.PacketsAct.get(enb.allPackets[i])
+								&& !enb.allPackets[i].acting
+								)
+						{
+							
+							enb.allPackets[i].state.act();
+						}
+					}
 				}
 			}
-			}
-			for (int j=0;j<Constant.SWITCH_LINK;j++) {
-			ExitBuffer exb = sw.physicalLayer.EXBs[j];
-			for (int i = 0; i < Constant.QUEUE_SIZE - 1; i++) {
-				if (exb.allPackets[i] != null) {
+			for (int j = 0; j < Constant.SWITCH_LINK; j++) {
+				ExitBuffer exb = sw.physicalLayer.EXBs[j];
+				for (int i = 0; i < Constant.QUEUE_SIZE; i++) {
+					if (exb.allPackets[i] != null) {
 //					if (!(Simulator.PacketsAct.containsKey(exb.allPackets[i])))
 //						exb.allPackets[i].state.act();
-					if (Simulator.PacketsAct.containsKey(exb.allPackets[i])
-							&& Simulator.PacketsAct.get(exb.allPackets[i]))
-						exb.allPackets[i].state.act();
+						if (Simulator.PacketsAct.containsKey(exb.allPackets[i])
+								&& Simulator.PacketsAct.get(exb.allPackets[i]))
+						{
+							exb.allPackets[i].state.act();
+//							System.out.println(".");
+						}
+					}
 				}
-			}
 			}
 
 		}
@@ -291,7 +342,10 @@ public class DiscreteEventSimulator extends Simulator {
 //				if (!(Simulator.PacketsAct.containsKey(w.p)))
 //					w.p.state.act();
 				if (Simulator.PacketsAct.containsKey(w.p) && Simulator.PacketsAct.get(w.p))
+				{
 					w.p.state.act();
+//					System.out.println(".");
+				}
 		}
 
 	}
@@ -421,14 +475,12 @@ public class DiscreteEventSimulator extends Simulator {
 		}
 	}
 
-	public void deleteAllEventsFromList(ArrayList<Event> currentEvents) {
+	public void deleteEventFromAllEvent(Event e) {
 		for (int i = 0; i < this.allEvents.size(); i++) {
-			for (int j = 0; j < currentEvents.size(); j++) {
-				if (this.allEvents.get(i) == currentEvents.get(j)) {
+				if (this.allEvents.get(i) == e) {
 					this.allEvents.remove(i);
 				}
 			}
-		}
 	}
 
 	public double selectNextCurrentTime(long currentTime) {
@@ -465,70 +517,76 @@ public class DiscreteEventSimulator extends Simulator {
 	}
 
 	public ArrayList<Event> selectCurrentEvents(double currentTime) {
-		// ArrayList<Event> allEvents = new ArrayList<Event>();
-		List<Host> allHosts = this.network.getHosts();
-		List<Way> allWays = this.network.getWays();
-		List<Switch> allSwitchs = this.network.getSwitches();
+//		// ArrayList<Event> allEvents = new ArrayList<Event>();
+//		List<Host> allHosts = this.network.getHosts();
+//		List<Way> allWays = this.network.getWays();
+//		List<Switch> allSwitchs = this.network.getSwitches();
 		ArrayList<Event> alEvent = new ArrayList<Event>();
-		for (Host host : allHosts) {
+//		for (Host host : allHosts) {
+////			// soonestEndTime will be updated later as events are executed
+////			if (host.physicalLayer.sq.soonestEndTime == currentTime) {
+////				addAllEventsFromList(host.physicalLayer.sq.allEvents);
+////			}
+////			// soonestEndTime will be updated later as events are executed
+////			if (host.physicalLayer.EXBs[0].soonestEndTime == currentTime) {
+////				addAllEventsFromList(host.physicalLayer.EXBs[0].allEvents);// add events of EXB of hosts
+////			}
+//
+//			for (Event e : host.physicalLayer.sq.allEvents) {
+//				if (e.startTime == currentTime) {
+//					alEvent.add(e);
+//				}
+//			}
+//
+//			for (int i = 0; i < Constant.HOST_LINK; i++) {
+//				for (Event e : host.physicalLayer.EXBs[i].allEvents) {
+//					if (e.startTime == currentTime) {
+//						alEvent.add(e);
+//					}
+//				}
+//			}
+//		}
+//
+//		for (Switch sw : allSwitchs) {
 //			// soonestEndTime will be updated later as events are executed
-//			if (host.physicalLayer.sq.soonestEndTime == currentTime) {
-//				addAllEventsFromList(host.physicalLayer.sq.allEvents);
-//			}
 //			// soonestEndTime will be updated later as events are executed
-//			if (host.physicalLayer.EXBs[0].soonestEndTime == currentTime) {
-//				addAllEventsFromList(host.physicalLayer.EXBs[0].allEvents);// add events of EXB of hosts
+////			if (sw.physicalLayer.EXBs[0].soonestEndTime == currentTime) {
+////				addAllEventsFromList(sw.physicalLayer.ENBs[0].allEvents);// add events of EXB of hosts
+////			}
+////			// can them EnB, Link
+////			if (sw.physicalLayer.ENBs[0].soonestEndTime == currentTime) {
+////				addAllEventsFromList(sw.physicalLayer.EXBs[0].allEvents);// add events of EXB of hosts
+////			}
+//			for (int i = 0; i < Constant.SWITCH_LINK; i++) {
+//				for (Event e : sw.physicalLayer.ENBs[i].allEvents) {
+//					if (e.startTime == currentTime) {
+//						alEvent.add(e);
+//					}
+//				}
 //			}
-
-			for (Event e : host.physicalLayer.sq.allEvents) {
-				if (e.startTime == currentTime) {
-					alEvent.add(e);
-				}
-			}
-
-			for (int i=0;i<Constant.HOST_LINK;i++) {
-				for (Event e : host.physicalLayer.EXBs[i].allEvents) {
-					if (e.startTime == currentTime) {
-						alEvent.add(e);
-					}
-			}
-		}
-		}
-
-		for (Switch sw : allSwitchs) {
-			// soonestEndTime will be updated later as events are executed
-			// soonestEndTime will be updated later as events are executed
-//			if (sw.physicalLayer.EXBs[0].soonestEndTime == currentTime) {
-//				addAllEventsFromList(sw.physicalLayer.ENBs[0].allEvents);// add events of EXB of hosts
+//			for (int i = 0; i < Constant.SWITCH_LINK; i++) {
+//				for (Event e : sw.physicalLayer.EXBs[i].allEvents) {
+//					if (e.startTime == currentTime) {
+//						alEvent.add(e);
+//					}
+//				}
 //			}
-//			// can them EnB, Link
-//			if (sw.physicalLayer.ENBs[0].soonestEndTime == currentTime) {
-//				addAllEventsFromList(sw.physicalLayer.EXBs[0].allEvents);// add events of EXB of hosts
+//		}
+//
+//		for (Way w : allWays) {
+//			// dieu kien de current time;
+//			for (Event e : w.allEvents) {
+//				if (e.startTime == currentTime) {
+//					alEvent.add(e);
+//				}
 //			}
-			for (int i=0;i<Constant.SWITCH_LINK;i++) {
-				for (Event e : sw.physicalLayer.ENBs[i].allEvents) {
-					if (e.startTime == currentTime) {
-						alEvent.add(e);
-					}
-				}
-			}
-			for (int i=0;i<Constant.SWITCH_LINK;i++) {
-			for (Event e : sw.physicalLayer.EXBs[i].allEvents) {
-				if (e.startTime == currentTime) {
-					alEvent.add(e);
-				}
-			}
+//		}
+		for (Event e: allEvents) {
+			if (e.startTime == currentTime) {
+				alEvent.add(e);
 			}
 		}
-
-		for (Way w : allWays) {
-			// dieu kien de current time;
-			for (Event e : w.allEvents) {
-				if (e.startTime == currentTime) {
-					alEvent.add(e);
-				}
-			}
-		}
+		
 		return alEvent;
 	}
 }

@@ -5,6 +5,7 @@ import elements.Element;
 import elements.ExitBuffer;
 import elements.Way;
 import network.Packet;
+import simulator.DiscreteEventSimulator;
 
 public class ReachingDestinationEvent extends Event {
 	//Event dai dien cho su kien loai (G): goi tin den duoc nut dich
@@ -28,6 +29,8 @@ public class ReachingDestinationEvent extends Event {
 			
 			w.state.act(this);
 			ExitBuffer exb = w.exb;
+			DiscreteEventSimulator sim = (DiscreteEventSimulator) exb.phyLayer.sim;
+			sim.deleteEventFromAllEvent(this);
 			exb.state.act(this);
 			Packet p = this.p;
 			if (p==null)

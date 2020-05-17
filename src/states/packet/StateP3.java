@@ -12,6 +12,7 @@ import events.ReachingENBEvent;
 import network.Node;
 import network.Packet;
 import network.host.SourceQueue;
+import simulator.DiscreteEventSimulator;
 import simulator.Simulator;
 import states.State;
 import states.exb.X01;
@@ -49,14 +50,18 @@ public class StateP3 extends State {
 					// tam thoi cho ca 3 sq, ENB va EXB = null
 				 && sq != null
 				) {
+			Simulator.PacketsAct.replace(this.p, false);
 			Event e = new ReachingDestinationEvent(w, this.p);
 			e.startTime = sq.phyLayer.sim.time();
 			e.endTime = e.startTime + Constant.HOST_TO_SWITCH_LENGTH / Constant.PROPAGATION_VELOCITY
 					+ Constant.PACKET_SIZE / Constant.LINK_BANDWIDTH;
 			w.insertEvents(e);
+			DiscreteEventSimulator sim = (DiscreteEventSimulator) sq.phyLayer.sim;
+			sim.allEvents.add(e);
 		}
 		else if (sq==null) {
-			EntranceBuffer ENB = w.link.v.physicalLayer.ENBs[0];
+			Simulator.PacketsAct.replace(this.p, false);
+			EntranceBuffer ENB = w.enb;
 			if (p.state instanceof StateP3 && w.state instanceof W0 && 
 					sq == null	//nut tiep theo la Switch
 								// (chua sua phan khoi tao Node)
@@ -67,6 +72,8 @@ public class StateP3 extends State {
 				e.endTime = e.startTime + Constant.HOST_TO_SWITCH_LENGTH / Constant.PROPAGATION_VELOCITY
 								+ Constant.PACKET_SIZE / Constant.LINK_BANDWIDTH;
 				w.insertEvents(e);
+				DiscreteEventSimulator sim = (DiscreteEventSimulator) ENB.phyLayer.sim;
+				sim.allEvents.add(e);
 			}
 		}
 		}
@@ -79,8 +86,7 @@ public class StateP3 extends State {
 		// Evemnt D: Chuyen packet tu Way den ENB
 		Element e = this.elem;
 		Way w = (Way) e;
-		Node v = w.link.v; // node dich
-		EntranceBuffer ENB = v.physicalLayer.ENBs[0];
+		EntranceBuffer ENB = w.enb;
 //		w.p = null;
 		
 		this.p.state = new StateP4(this.p, ENB);
@@ -89,7 +95,7 @@ public class StateP3 extends State {
 	
 	public void act(ReachingDestinationEvent ev) {	// G
 		// goi duoc nhan boi nut dich
-		this.p.state = new StateP6(elem);	// chuyen den node dich
+		this.p.state = new StateP6(elem, p);	// chuyen den node dich
 	}	
 	
 }

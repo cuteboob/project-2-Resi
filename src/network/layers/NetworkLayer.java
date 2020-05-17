@@ -29,6 +29,7 @@ public class NetworkLayer {
 		for (int i=0;i<Constant.SWITCH_LINK;i++) {
 			if (sw.physicalLayer.EXBs[i].way.to == RoutingTable.get(p.getDestination())) {
 				EXBIndex = i;
+				break;
 			}
 		}
 		return EXBIndex;

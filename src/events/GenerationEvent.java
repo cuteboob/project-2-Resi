@@ -3,6 +3,7 @@ package events;
 import elements.Element;
 import elements.ExitBuffer;
 import network.host.*;
+import simulator.DiscreteEventSimulator;
 import simulator.Simulator;
 import network.Packet;
 import states.exb.X00;
@@ -15,6 +16,7 @@ public class GenerationEvent extends Event {
 	//Event dai dien cho su kien loai (A): goi tin duoc sinh ra
 	public int numSent = 0;		// ???????
 	public int destination;
+	public static int paid = 0;
 	// sua lai bang host thay vi elem
 	
 	// truyen them int destination
@@ -43,28 +45,37 @@ public class GenerationEvent extends Event {
 		//if(elem instanceof SourceQueue)
 		{
 			System.out.println("Event A");
-			elem.removeExecutedEvent(this);	// khi thuc thi xoa event nay
-			
 			SourceQueue sq = (SourceQueue)elem;
+			elem.removeExecutedEvent(this);	// khi thuc thi xoa event nay
+			DiscreteEventSimulator sim = (DiscreteEventSimulator) sq.phyLayer.sim;
+			sim.deleteEventFromAllEvent(this);
+			
+			
 			
 			
 			// co the la Sq1 hoac Sq2
-			sq.state.act(this);
-			
-			Packet p = sq.state.p;
-						// lay Packet p tu SourceQueue
-			
-			if(p == null) return;
-						// neu SourceQueue khong co packet
-			p.setId(numSent);	// numSent nay de lam gi???
-			this.pid = p.id;
-			p.setDestination(this.destination);
+			if (sq.allPackets.size()<=1)
+			 {
+				sq.state.act(this);
+				
+				Packet p = sq.state.p;
+							// lay Packet p tu SourceQueue
+				
+				if(p == null) return;
+				paid++;
+							// neu SourceQueue khong co packet
+				p.setId(paid);	// numSent nay de lam gi???
 
+				this.pid = p.id;
+				p.setDestination(this.destination);
+
+				
+				p.state = new StateP1(sq, p);
+						// PacketP1 o trong SourceQueue
+				Simulator.PacketsAct.put(p,true);
+				p.state.act(this);
+			}
 			
-			p.state = new StateP1(sq, p);
-					// PacketP1 o trong SourceQueue
-			Simulator.PacketsAct.put(p,true);
-			p.state.act(this);
 			
 			
 			/*

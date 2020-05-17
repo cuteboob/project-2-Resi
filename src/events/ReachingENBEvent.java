@@ -8,6 +8,7 @@ import elements.EntranceBuffer;
 import elements.ExitBuffer;
 import elements.Way;
 import network.Packet;
+import simulator.DiscreteEventSimulator;
 import states.enb.N0;
 import states.enb.N1;
 
@@ -66,18 +67,18 @@ public class ReachingENBEvent extends Event {
 	 */
 	public void execute() {
 		Way w = (Way) elem;
-		EntranceBuffer ENB = w.link.v.physicalLayer.ENBs[0];
-		ExitBuffer EXB = w.link.u.physicalLayer.EXBs[0];
+		EntranceBuffer ENB = w.enb;
 		
 		if (ENB.phyLayer.sim.time()==this.endTime) {
 			p.acting = false;
 			elem.removeExecutedEvent(this);
+			DiscreteEventSimulator sim = (DiscreteEventSimulator) ENB.phyLayer.sim;
+			sim.deleteEventFromAllEvent(this);
 			Packet p = this.p;
 			if (p==null)
 				return;
 			w.state.act(this);
 			ENB.state.act(this);
-			EXB.state.act(this);
 			p.state.act(this);
 		}
 		else if (ENB.phyLayer.sim.time()==this.startTime) {

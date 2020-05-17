@@ -19,7 +19,7 @@ public class Packet extends Element{
     private int destination;
     private int size;
     
-    public boolean acting = false;
+    public boolean acting;
     
     private double startTime;
     private double endTime;
@@ -47,6 +47,7 @@ public class Packet extends Element{
         this.state = new StateP1(sq);
         this.startTime = startTime;
         this.endTime = -1;
+        this.acting = false;
     }
     
     public Packet(int id, Packet p, double startTime) {

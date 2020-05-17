@@ -11,6 +11,7 @@ import network.Packet;
 import network.Switch;
 import network.host.Host;
 import network.host.SourceQueue;
+import simulator.DiscreteEventSimulator;
 import simulator.Simulator;
 import states.State;
 import states.exb.X00;
@@ -44,14 +45,14 @@ public class StateP2 extends State {
 		System.out.println("P2");
 		ExitBuffer EXB = (ExitBuffer) elem;
 		Way w = EXB.way;
-		System.out.println(check(EXB));
 		if (w.state instanceof W0&& check(EXB)
 				&& (EXB.state instanceof X11 || EXB.state instanceof X01)) {
 			Event e = new LeavingEXBEvent(EXB, this.p);
 			e.startTime = EXB.phyLayer.sim.time();
 			e.endTime = e.startTime;
 			EXB.insertEvents(e);
-			System.out.println("a");
+			DiscreteEventSimulator sim = (DiscreteEventSimulator) EXB.phyLayer.sim;
+			sim.allEvents.add(e);
 		}
 		}
 	}

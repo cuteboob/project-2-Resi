@@ -6,6 +6,10 @@ import elements.ExitBuffer;
 import elements.Way;
 import network.Node;
 import network.Packet;
+import simulator.DiscreteEventSimulator;
+import states.exb.X01;
+import states.exb.X11;
+import states.unidirectionalway.W0;
 
 public class LeavingSwitchEvent extends Event {
 	//Event dai dien cho su kien loai (F): goi tin roi khoi EXB cua Switch de di len tren LINK
@@ -22,11 +26,12 @@ public class LeavingSwitchEvent extends Event {
 	public void execute() {
 		ExitBuffer EXB = (ExitBuffer) elem;
 		Way w = EXB.way;
-		
+
 		if (EXB.phyLayer.sim.time() == this.endTime) {
 			p.acting = false;
 			elem.removeExecutedEvent(this);
-			
+			DiscreteEventSimulator sim = (DiscreteEventSimulator) EXB.phyLayer.sim;
+			sim.deleteEventFromAllEvent(this);
 			
 //			F: Nếu EXB co goi, EXB ở trạng thái X01 hoặc X11 và unidirectional way(link)
 //			ở trạng thái W0. 
@@ -41,11 +46,11 @@ public class LeavingSwitchEvent extends Event {
 			if (p == null)
 				return;
 			
-			// p o trang thai P3
+				// p o trang thai P3
 			p.state.act(this);
-			
+				
 			EXB.state.act(this);
-			// tu W0->W1
+				// tu W0->W1
 			w.state.act(this);
 		}
 		

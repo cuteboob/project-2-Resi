@@ -7,6 +7,7 @@ import elements.Way;
 import network.Node;
 import network.Packet;
 import network.host.SourceQueue;
+import simulator.DiscreteEventSimulator;
 
 public class LeavingEXBEvent extends Event {
 	// Event dai dien cho su kien loai (C): goi tin roi khoi EXB
@@ -25,6 +26,8 @@ public class LeavingEXBEvent extends Event {
 		// Loai bo EXB de truyen
 		elem.removeExecutedEvent(this);
 		ExitBuffer EXB = (ExitBuffer) elem;
+		DiscreteEventSimulator sim = (DiscreteEventSimulator) EXB.phyLayer.sim;
+		sim.deleteEventFromAllEvent(this);
 		
 		// EXB co the o trang thai X01 hoac X11
 		// tu X01->X00 hoac X11->X00
@@ -40,10 +43,10 @@ public class LeavingEXBEvent extends Event {
 		if (p == null)
 			return;
 		
+		EXB.state.act(this);
+		
 		// p o trang thai P2
 		p.state.act(this);
-		
-		EXB.state.act(this);
 		
 		w.state.act(this);
 	}

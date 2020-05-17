@@ -56,8 +56,8 @@ public class X11 extends State {
 			int u = nw.waysUandV.get(exb.way).get(0);
 			int v = nw.waysUandV.get(exb.way).get(1);
 			NewGraph g = (NewGraph) nw.getGraph();
-			g.addWay(u, v);
-			DijkstrasAlgorithm.Init();
+//			g.addWay(u, v);
+//			DijkstrasAlgorithm.Init();
 			exb.state = new X00(exb);
 		}
 		for (int i = 0; i < Constant.QUEUE_SIZE - 1; i++) {
@@ -82,8 +82,8 @@ public class X11 extends State {
 				int u = nw.waysUandV.get(exb.way).get(0);
 				int v = nw.waysUandV.get(exb.way).get(1);
 				NewGraph g = (NewGraph) nw.getGraph();
-				g.addWay(u, v);
-				DijkstrasAlgorithm.Init();
+//				g.addWay(u, v);
+//				DijkstrasAlgorithm.Init();
 				exb.state = new X00(exb);
 			}
 			}
@@ -91,5 +91,6 @@ public class X11 extends State {
 			exb.allPackets[i] = exb.allPackets[i + 1];
 		}
 		exb.allPackets[Constant.QUEUE_SIZE - 1] = null;
+		exb.state = new X00(exb);
 	}
 }

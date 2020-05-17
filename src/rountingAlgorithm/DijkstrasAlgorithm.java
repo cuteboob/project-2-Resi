@@ -156,6 +156,5 @@ public class DijkstrasAlgorithm {
 			}
 		}
 
-//		System.out.println("");
 	}
 }
