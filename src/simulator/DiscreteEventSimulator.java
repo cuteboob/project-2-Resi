@@ -67,9 +67,10 @@ public class DiscreteEventSimulator extends Simulator {
 		return timeLimit;
 	} // x
 
-	public void start() {
+	public void start(Map<Integer, Integer> trafficPattern) {
 		InitStateAndWay();
-		allEvents = selectAllEvents();
+//		allEvents = selectAllEvents();
+		int count = 0;
 		while (currentTime <= timeLimit) {
 			System.out.println("CurrentTime: " + currentTime);
 			InitPacketAct();
@@ -141,7 +142,17 @@ public class DiscreteEventSimulator extends Simulator {
 //			allEvents = selectAllEvents();
 
 			currentTime = minEndTimeOffAllEvents(); // ok
-
+			System.out.println(allEvents.size());
+			if (currentTime <= Constant.HOST_DELAY * count && currentTime >= Constant.HOST_DELAY * (count-1)) {
+				count++;
+	        	for (Integer source : trafficPattern.keySet()) {
+	                Integer destination = trafficPattern.get(source);
+	                network.getHostById(source).generatePacket(destination, Constant.HOST_DELAY * count);
+	            }
+	        	System.out.println(count);
+	        }
+			System.out.println(allEvents.size());
+			System.out.println("hello");
 			// Ham EventGenerator se su dung traffic de tao them goi
 			// cong them tat ca Events trong network
 

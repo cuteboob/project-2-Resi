@@ -1,6 +1,7 @@
 package network;
 
 import config.Constant;
+import custom.fattree.FatTreeGraph;
 import elements.Way;
 import graph.Coordination;
 import graph.Graph;
@@ -206,6 +207,59 @@ public class Topology {
 //        Topology.initRouteTable(g, switches);
 	}
 	
+	public Topology(FatTreeGraph g) {
+		this.graph = g;
+
+        ArrayList<Integer> hostIDs = (ArrayList<Integer>) g.hosts();
+        ArrayList<Integer> switchIDs = (ArrayList<Integer>) g.switches();
+        
+        for (Integer hid : hostIDs) {
+            Host host = new Host(hid);
+            hosts.add(host);
+            hostById.put(hid, host);
+        }
+
+        for (Integer sid : switchIDs) {
+            Switch sw = new Switch(sid
+            		//, routingAlgorithm
+            		);
+            switches.add(sw);
+            switchById.put(sid, sw);
+        }
+
+        for (int i = 0; i < g.V();i++) {
+        	Node node = null;
+        	if (switchById.containsKey(i)) {
+        		node = switchById.get(i);
+        	}
+        	if (hostById.containsKey(i)) {
+        		node = hostById.get(i);
+        	}
+        	for (Integer nodeID: g.adj(i)) {
+        		if (switchById.containsKey(nodeID)) {
+        			Switch sw = switchById.get(nodeID);
+            		Link l = new Link(node, sw);
+            		Way w = new Way(l);
+            		this.ways.add(w);
+            		List<Integer> a = new ArrayList<Integer>();
+            		a.add(node.id);
+            		a.add(sw.id);
+            		waysUandV.put(w, a);
+        		}
+        		if (hostById.containsKey(nodeID)) {
+        			Host h = hostById.get(nodeID);
+            		Link l = new Link(node, h);
+            		Way w = new Way(l);
+            		this.ways.add(w);
+            		List<Integer> a = new ArrayList<Integer>();
+            		a.add(node.id);
+            		a.add(h.id);
+            		waysUandV.put(w, a);
+        		}
+        	}
+        }
+//        Topology.initRouteTable(g, switches);
+	}
 	
 	public List<Link> getLink() {
     	return Links;

@@ -58,7 +58,7 @@ public class X11 extends State {
 			Topology nw = ThroughputExperiment.network1;
 			int u = nw.waysUandV.get(exb.way).get(0);
 			int v = nw.waysUandV.get(exb.way).get(1);
-			NewGraph g = (NewGraph) nw.getGraph();
+//			NewGraph g = (NewGraph) nw.getGraph();
 //			g.addWay(u, v);
 //			DijkstrasAlgorithm.Init();
 			exb.state = new X00(exb);
@@ -84,7 +84,7 @@ public class X11 extends State {
 				Topology nw = ThroughputExperiment.network1;
 				int u = nw.waysUandV.get(exb.way).get(0);
 				int v = nw.waysUandV.get(exb.way).get(1);
-				NewGraph g = (NewGraph) nw.getGraph();
+//				NewGraph g = (NewGraph) nw.getGraph();
 //				g.addWay(u, v);
 //				DijkstrasAlgorithm.Init();
 				exb.state = new X00(exb);

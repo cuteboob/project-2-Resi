@@ -33,9 +33,9 @@ public class Constant {
     public static final int PACKET_SIZE = (int) 1e5; // 100Kb
 
     // Maximum time system
-    public static final int MAX_TIME = (int) 1e9;
+    public static final int MAX_TIME = (int) 1e8;
 
-    public static final int PACKET_INTERVAL = PACKET_SIZE;
+    public static final int PACKET_INTERVAL = 100;
 
     public static final double RETRY_TIME = 10;
     public static final double PORT_BUFFER_SIZE = 1e5;
@@ -47,7 +47,7 @@ public class Constant {
     
 //    public static final int SWITCH_CYCLE = 10;
     									   
-    public static final int SWITCH_CYCLE = 10000;
+    public static final int SWITCH_CYCLE = 100000;
     
     public static final int CREDIT_DELAY = 1;
     

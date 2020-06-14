@@ -11,8 +11,8 @@ import network.Topology;
 import network.layers.NetworkLayer;
 import weightedloadexperiment.ThroughputExperiment;
 
-public class DijkstrasAlgorithm extends rountingAlgorithm {
-
+public class MaxFlowTest extends rountingAlgorithm{
+	private static int[][] adjMatrix;
 	private static final int NO_PARENT = -1;
 
 	// Function that implements Dijkstra's
@@ -74,9 +74,6 @@ public class DijkstrasAlgorithm extends rountingAlgorithm {
 			// processed
 			added[nearestVertex] = true;
 
-			// Update dist value of the
-			// adjacent vertices of the
-			// picked vertex.
 			for (int vertexIndex = 0; vertexIndex < nVertices; vertexIndex++) {
 				int edgeDistance = adjacencyMatrix[nearestVertex][vertexIndex];
 
@@ -96,7 +93,7 @@ public class DijkstrasAlgorithm extends rountingAlgorithm {
 	public void printSolution(int startVertex, int[] distances, int[] parents, int endVertex) {
 
 		Topology nw = ThroughputExperiment.network1;
-
+		
 		int nVertices = distances.length;
 		int vertexIndex = endVertex;
 		if (vertexIndex != startVertex) {
@@ -105,6 +102,7 @@ public class DijkstrasAlgorithm extends rountingAlgorithm {
 			System.out.print(distances[vertexIndex] + "\t\t");
 			printPath(vertexIndex, parents, startVertex, nw, endVertex);
 		}
+
 	}
 
 	// Function to print shortest path
@@ -119,8 +117,10 @@ public class DijkstrasAlgorithm extends rountingAlgorithm {
 		}
 		printPath(parents[currentVertex], parents, startVertex, nw, endVertex);
 //		System.out.println("");
-		if (parents[currentVertex] > startVertex) {
+		if (parents[currentVertex]>startVertex) {
 			System.out.println(currentVertex + " " + parents[currentVertex]);
+			MaxFlowTest.adjMatrix[parents[currentVertex]][currentVertex] *= 5;
+//			System.out.println(MaxFlowTest.adjMatrix[parents[currentVertex]][currentVertex]);
 			// Switch (parents[currentVertex]) them EXBIndex den switch currentVertex
 			nw.getSwitchById(parents[currentVertex]).networkLayer.RoutingTable.put(endVertex, currentVertex);
 		}
@@ -132,14 +132,12 @@ public class DijkstrasAlgorithm extends rountingAlgorithm {
 		Graph g = ThroughputExperiment.network1.getGraph();
 		Topology nw = ThroughputExperiment.network1;
 		List<Switch> switchs = nw.getSwitches();
-		for (Switch sw : switchs) {
+		for (Switch sw: switchs) {
 			sw.networkLayer.RoutingTable = new HashMap<Integer, Integer>();
 			// la destination va EXBIndex
 		}
 		int V = g.V();
-		System.out.println(V);
 		int[][] adjacencyMatrix = new int[V][V];
-
 		for (int i = 0; i < V; i++) {
 			for (int j = 0; j < V; j++) {
 				adjacencyMatrix[i][j] = 0;
@@ -150,12 +148,19 @@ public class DijkstrasAlgorithm extends rountingAlgorithm {
 				adjacencyMatrix[i][j] = 1;
 			}
 		}
+		MaxFlowTest.adjMatrix = adjacencyMatrix;
+		for (int i = 0; i < V; i++) {
+			for (int j : g.adj(i)) {
+				MaxFlowTest.adjMatrix[i][j] = 1;
+			}
+		}
 		Map<Integer, Integer> trafficPattern = ThroughputExperiment.trafficPattern;
 		for (int i = 0; i < V; i++) {
 			if (trafficPattern.containsKey(i)) {
-				dijkstra(adjacencyMatrix, i, trafficPattern.get(i));
+				dijkstra(MaxFlowTest.adjMatrix, i, trafficPattern.get(i));
 			}
 		}
+		int[][] a = MaxFlowTest.adjMatrix;
 		System.out.println("hello");
 	}
 }

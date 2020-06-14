@@ -2,6 +2,7 @@ package graph;
 
 import common.StdOut;
 import custom.smallworld.GridGraph;
+import ztest.fatTree;
 
 import java.util.*;
 
@@ -12,6 +13,8 @@ public abstract class Graph {
     public List<Integer>[] adj;
 
     public void addEdge(int v, int w) {
+//    	System.out.print(w + ",");
+    	fatTree.dem++;
         validateVertex(v);
         validateVertex(w);
         E++;
@@ -37,6 +40,7 @@ public abstract class Graph {
     }
 
     public int V() { return V; }
+    public int E() { return E; }
 
     public List<Integer> adj(int v) { return adj[v]; }
 

@@ -7,6 +7,9 @@ import java.util.Map;
 
 import graph.NewGraph;
 import network.Topology;
+import rountingAlgorithm.DijkstrasAlgorithm;
+import rountingAlgorithm.MaxFlowTest;
+import rountingAlgorithm.rountingAlgorithm;
 import weightedloadexperiment.ThroughputExperiment;
 
 public class twoSwitchTwoHostGraph {
@@ -43,6 +46,9 @@ public class twoSwitchTwoHostGraph {
 		
 		ThroughputExperiment experiment = new ThroughputExperiment(network);
 		
-		experiment.calThroughput(traffic, false);
+		rountingAlgorithm Dj = new DijkstrasAlgorithm();
+		rountingAlgorithm MF = new MaxFlowTest();
+		
+		experiment.calThroughput(traffic, false, MF);
 	}
 }

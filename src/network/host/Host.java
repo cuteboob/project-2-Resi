@@ -6,6 +6,7 @@ import events.GenerationEvent;
 import network.Link;
 import network.Node;
 import network.layers.PhysicalLayer;
+import simulator.DiscreteEventSimulator;
 
 
 
@@ -42,10 +43,11 @@ public class Host extends Node {
 		   else
 			   this.physicalLayer.sq.setDestionationID(destination);
 		   Event ev = new GenerationEvent(this.physicalLayer.sq, destination);
+		   DiscreteEventSimulator sim = (DiscreteEventSimulator) this.physicalLayer.sq.phyLayer.sim;
+		   sim.allEvents.add(ev);
 		   ev.startTime = a;
 		   ev.endTime = ev.startTime;
 		   this.physicalLayer.sq.insertEvents(ev);
-		
 	}
    
    public void receive()

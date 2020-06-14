@@ -1,6 +1,7 @@
 package ztest;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,10 +10,23 @@ import graph.Graph;
 import graph.NewGraph;
 import network.Switch;
 import network.Topology;
+import rountingAlgorithm.DijkstrasAlgorithm;
+import rountingAlgorithm.MaxFlowTest;
+import rountingAlgorithm.rountingAlgorithm;
 import weightedloadexperiment.ThroughputExperiment;
 
 public class finalNetwork {
+	public static ArrayList<Double> ketqua  = new ArrayList<Double>(); 
+	
+	/**
+	 * MF là MaxFlow cải thiện từ DijkstrasAlgorithm
+	 * Dj là DijkstrasAlgorithm (định tuyến lựa chọn đường đi ngắn nhất)
+	 */
+	public static String ThuatToan = "MF";
+	public static Integer LanLap = 20;
+	
 	public static void main(String[] args) {
+	for (int z=0;z<finalNetwork.LanLap;z++) {
 		int V = 36;
 		ArrayList<Integer> HostIDs = new ArrayList<Integer>();
 		ArrayList<Integer> SwitchIDs = new ArrayList<Integer>();
@@ -79,31 +93,33 @@ public class finalNetwork {
 		List<Integer> sources = new ArrayList<>();
         List<Integer> destination = new ArrayList<>();
         
-        sources.add(HostIDs.get(0));
-        sources.add(HostIDs.get(1));
-        sources.add(HostIDs.get(2));
-        sources.add(HostIDs.get(3));
-        sources.add(HostIDs.get(4));
-        sources.add(HostIDs.get(5));
-        sources.add(HostIDs.get(6));
-        sources.add(HostIDs.get(7));
+        Collections.shuffle(HostIDs);
         
-        destination.add(HostIDs.get(8));
-        destination.add(HostIDs.get(9));
-        destination.add(HostIDs.get(10));
-        destination.add(HostIDs.get(11));
-        destination.add(HostIDs.get(12));
-        destination.add(HostIDs.get(13));
-        destination.add(HostIDs.get(14));
-        destination.add(HostIDs.get(15));
+        for (int i = 0; i<HostIDs.size()/2;i++) {
+        	sources = HostIDs.subList(0, HostIDs.size() / 2);
+        	destination = HostIDs.subList(HostIDs.size() / 2, HostIDs.size());
+        }
         
         Map<Integer, Integer> traffic = new HashMap<>();
+        
         for (int i=0;i<8;i++) {
         	traffic.put(sources.get(i), destination.get(i));
         }
 		
 		ThroughputExperiment experiment = new ThroughputExperiment(network);
+		rountingAlgorithm rA = new rountingAlgorithm();
+		switch (ThuatToan) {
+		case "MF":
+			rA = new DijkstrasAlgorithm();
+			break;
+		case "Dj":
+			rA = new MaxFlowTest();
+			break;
+		}
 		
-		experiment.calThroughput(traffic, false);
+		// Dj, MF là thuật toán định tuyến
+		experiment.calThroughput(traffic, false, rA);
+	}
+		System.out.println(finalNetwork.ketqua);
 	}
 }

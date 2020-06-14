@@ -18,7 +18,7 @@ public class StateP6 extends State {
 		Way w = (Way) elem;
 		DiscreteEventSimulator sim = (DiscreteEventSimulator) w.link.v.physicalLayer.sim;
 		try {
-			sim.receivedPacket[(int) (sim.getTime() / Constant.EXPERIMENT_INTERVAL + 1)]++;
+			sim.receivedPacket[(int) (sim.getTime() / Constant.EXPERIMENT_INTERVAL + 1)]+=Constant.HOST_DELAY/100000;
 		}
 		catch (Exception e) {
 			System.out.println(e);

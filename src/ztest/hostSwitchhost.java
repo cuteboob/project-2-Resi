@@ -12,6 +12,9 @@ import network.Topology;
 import network.host.DestinationNode;
 import network.host.Host;
 import network.host.SourceQueue;
+import rountingAlgorithm.DijkstrasAlgorithm;
+import rountingAlgorithm.MaxFlowTest;
+import rountingAlgorithm.rountingAlgorithm;
 import weightedloadexperiment.ThroughputExperiment;
 
 public class hostSwitchhost {
@@ -48,7 +51,10 @@ public class hostSwitchhost {
 		
 		ThroughputExperiment experiment = new ThroughputExperiment(network);
 		
-		experiment.calThroughput(traffic, false);
+		rountingAlgorithm Dj = new DijkstrasAlgorithm();
+		rountingAlgorithm MF = new MaxFlowTest();
+		
+		experiment.calThroughput(traffic, false, MF);
 		
 	}
 }

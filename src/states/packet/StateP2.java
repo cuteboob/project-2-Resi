@@ -45,7 +45,7 @@ public class StateP2 extends State {
 		System.out.println("P2");
 		ExitBuffer EXB = (ExitBuffer) elem;
 		Way w = EXB.way;
-		if (w.state instanceof W0&& check(EXB)
+		if (w.state instanceof W0 && check(EXB)
 				&& (EXB.state instanceof X11 || EXB.state instanceof X01)) {
 			Event e = new LeavingEXBEvent(EXB, this.p);
 			e.startTime = EXB.phyLayer.sim.time();
